@@ -25,7 +25,9 @@ def loss_hinge_gen(dis_fake):
     return loss
 
 def loss_hard_reg(pred, label, n_classes):
-    loss = torch.mean(torch.abs(pred-label.float()/n_classes+0.5))
+    n_intervals = n_classes - 1
+    target = label.reshape(label.size()[0], 1).float() / (n_intervals * 0.5) - 1.
+    loss = torch.mean(torch.abs(pred-target))
     return loss
 
 def loss_soft_reg(pred, label):

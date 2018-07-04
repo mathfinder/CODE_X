@@ -98,7 +98,7 @@ class SNResNetProjectionDiscriminator(nn.Module):
         h = self.activation(h)
         h = torch.sum(torch.sum(h, 3), 2)  # Global pooling
         output = self.l7(h)
-        reg = self.l7_reg(h)
+        reg = F.tanh(self.l7_reg(h))
         if y is not None:
             w_y = self.l_y(y)
             output = output + torch.sum(w_y * h, dim=1, keepdim=True)

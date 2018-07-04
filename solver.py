@@ -155,13 +155,16 @@ class Solver(object):
         # x[x < 0.5] = 0
         return x
 
-    def compute_accuracy(self, x, y):
+    def compute_accuracy(self, x, y, n_classes=5):
         #todo:
         if x.dim() > 1:
             _, predicted = torch.max(x, dim=1)
             correct = (predicted == y).float()
         else:
-            correct = ( (x > y.float()-0.25) * (x < y.float()+0.25 ) ).float()
+            eps = 1./n_classes/4.
+            n_intervals = n_classes - 1
+            target = y.float()/(n_intervals*0.5)-1.
+            correct = ( (x >= target-eps) * (x < target+eps ) ).float()
         accuracy = torch.mean(correct) * 100.0
         return accuracy
 
@@ -236,8 +239,8 @@ class Solver(object):
                 fake_x = self.G(real_x, fake_label).detach()
                 out_fake, _ = self.D(fake_x, fake_label)
 
-                # d_loss_fake = torch.mean(out_src)
                 d_loss_adv = loss_hinge_dis(out_fake, out_real)
+                # todo:regression
                 d_loss_reg = loss_hard_reg(out_reg, real_label, self.c_dim)
 
                 # Compute classification accuracy of the discriminator
@@ -312,13 +315,13 @@ class Solver(object):
                         os.path.join(self.sample_path, '{}_{}_fake.png'.format(e+1, i+1)),nrow=1, padding=0)
                     print('Translated images and saved into {}..!'.format(self.sample_path))
 
-                # Save model checkpoints
-                if (i+1) % self.model_save_step == 0:
-                    print('Save model checkpoints')
-                    torch.save(self.G.state_dict(),
-                        os.path.join(self.model_save_path, '{}_{}_G.pth'.format(e+1, i+1)))
-                    torch.save(self.D.state_dict(),
-                        os.path.join(self.model_save_path, '{}_{}_D.pth'.format(e+1, i+1)))
+            # Save model checkpoints
+            if (e+1) % self.model_save_step == 0 and (e+1) > self.model_save_star:
+                print('Save model checkpoints')
+                torch.save(self.G.state_dict(),
+                    os.path.join(self.model_save_path, '{}_G.pth'.format(e+1)))
+                torch.save(self.D.state_dict(),
+                    os.path.join(self.model_save_path, '{}_D.pth'.format(e+1)))
 
             # Decay learning rate
             if (e+1) > (self.num_epochs - self.num_epochs_decay):
