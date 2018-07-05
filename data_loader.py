@@ -7,6 +7,7 @@ from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from PIL import Image
 import numpy as np
+# from source.datasets.folder import ImageFolder
 
 class TestDataset(Dataset):
     def __init__(self, image_path, transform):

@@ -76,12 +76,12 @@ class SNResNetProjectionDiscriminator(nn.Module):
         super(SNResNetProjectionDiscriminator, self).__init__()
         self.activation = activation
 
-        self.block1 = OptimizedBlock(ch_in, ch)
-        self.block2 = Block(ch, ch * 2, activation=activation, downsample=True)
-        self.block3 = Block(ch * 2, ch * 4, activation=activation, downsample=True)
-        self.block4 = Block(ch * 4, ch * 8, activation=activation, downsample=True)
-        self.block5 = Block(ch * 8, ch * 16, activation=activation, downsample=True)
-        self.block6 = Block(ch * 16, ch * 16, activation=activation, downsample=False)
+        self.block1 = SNOptimizedBlock(ch_in, ch)
+        self.block2 = SNBlock(ch, ch * 2, activation=activation, downsample=True)
+        self.block3 = SNBlock(ch * 2, ch * 4, activation=activation, downsample=True)
+        self.block4 = SNBlock(ch * 4, ch * 8, activation=activation, downsample=True)
+        self.block5 = SNBlock(ch * 8, ch * 16, activation=activation, downsample=True)
+        self.block6 = SNBlock(ch * 16, ch * 16, activation=activation, downsample=False)
         self.l7 = SNLinear(ch * 16, 1)
         self.l7_reg = SNLinear(ch * 16, 1)
         if n_classes > 0:

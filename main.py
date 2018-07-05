@@ -53,11 +53,11 @@ def main(config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     #
-    parser.add_argument('--device_ids', default=[0])
+    parser.add_argument('--device_ids', default=[1])
 
     # Model hyper-parameters
-    parser.add_argument('--c_dim', type=int, default=5)
-    parser.add_argument('--c2_dim', type=int, default=5)
+    parser.add_argument('--c_dim', type=int, default=7)
+    parser.add_argument('--c2_dim', type=int, default=7)
     parser.add_argument('--dataset_crop_size', type=int, default=128)
     parser.add_argument('--image_size', type=int, default=128)
     parser.add_argument('--g_conv_dim', type=int, default=64)
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('--d_lr', type=float, default=0.0001)
     parser.add_argument('--lambda_cls', type=float, default=1)
     parser.add_argument('--lambda_rec', type=float, default=10)
-    parser.add_argument('--lambda_reg', type=float, default=1)
+    parser.add_argument('--lambda_reg', type=float, default=10)
     parser.add_argument('--d_train_repeat', type=int, default=5)
 
     # Training settings
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_epochs_decay', type=int, default=100)
     parser.add_argument('--num_iters', type=int, default=200000)
     parser.add_argument('--num_iters_decay', type=int, default=100000)
-    parser.add_argument('--batch_size', type=int, default=20)
+    parser.add_argument('--batch_size', type=int, default=10)
     parser.add_argument('--num_workers', type=int, default=5)
     parser.add_argument('--beta1', type=float, default=0.5)
     parser.add_argument('--beta2', type=float, default=0.999)
@@ -98,8 +98,12 @@ if __name__ == '__main__':
     parser.add_argument('--with_mask', type=bool, default=False)
 
     # Path
-    parser.add_argument('--task_name', type=str, default='c_gan_v2__reg_D__weighted_multi_field_G__no_featurewise_pair_D__lambda_rec=10_lambda_reg=1__small')
-    parser.add_argument('--dataset_image_path', type=str, default='./data/yamaha-aligned-5cls')
+    # parser.add_argument('--task_name', type=str,
+    #                     default='c_gan_v2__reg_D__weighted_multi_field_G__no_featurewise_pair_D__lambda_rec=10_lambda_reg=1__multi_sample')
+    parser.add_argument('--task_name', type=str, default='lambda_reg=10__Generator_small_SelfAttention')
+    # parser.add_argument('--task_name', type=str, default='lambda_reg=10__Generator_small_mutiviewsample')
+
+    parser.add_argument('--dataset_image_path', type=str, default='./data/faceAgingACMMM')
     parser.add_argument('--metadata_path', type=str, default='./data/list_attr_celeba.txt')
     parser.add_argument('--test_label_path', type=str, default='/home/ben/mathfinder/PROJECT/IJCV2018/code/StarGAN-Multi/data/CelebA_nocrop/test_label_list_1.txt')
     parser.add_argument('--ckpt_path', type=str, default='ckpt')
@@ -111,9 +115,9 @@ if __name__ == '__main__':
 
     # Step size
     parser.add_argument('--log_step', type=int, default=20)
-    parser.add_argument('--sample_step', type=int, default=200)
-    parser.add_argument('--model_save_step', type=int, default=230)
-    parser.add_argument('--model_save_star', type=int, default=0)
+    parser.add_argument('--sample_step', type=int, default=1000)
+    parser.add_argument('--model_save_step', type=int, default=20)
+    parser.add_argument('--model_save_star', type=int, default=250)
 
     config = parser.parse_args()
 

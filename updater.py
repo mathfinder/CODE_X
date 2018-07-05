@@ -31,7 +31,8 @@ def loss_hard_reg(pred, label, n_classes):
     return loss
 
 def loss_soft_reg(pred, label):
-    loss = torch.mean( F.relu(pred - label.float() - 1.) + F.relu(label.float() - pred))
+    tmp = pred.squeeze()
+    loss = torch.mean( F.relu(tmp - label.float() - 1.) + F.relu(label.float() - tmp))
     return loss
 
 

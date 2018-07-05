@@ -89,7 +89,11 @@ class Solver(object):
     def build_model(self):
         # Define a generator and a discriminator
         # self.G = Generator(self.g_conv_dim, self.c_dim, self.g_repeat_num)
-        self.G = Generator_small(self.g_conv_dim, self.c_dim, self.g_repeat_num)
+        # self.G = Generator_small(self.g_conv_dim, self.c_dim, self.g_repeat_num, identity=False, self_attention=False)
+        # self.G = Generator_FNT(self.g_conv_dim, self.c_dim, self.g_repeat_num)
+        # self.G = Generator_FNT_mutiviewsample(self.g_conv_dim, self.c_dim, self.g_repeat_num)
+        # self.G = Generator_small_mutiviewsample(self.g_conv_dim, self.c_dim, self.g_repeat_num)
+        self.G = Generator_small_SelfAttention(self.g_conv_dim, self.c_dim, self.g_repeat_num)
         # self.D = Discriminator(self.d_conv_dim, self.c_dim)
         # self.D = SNDiscriminator(self.d_conv_dim, self.c_dim)
         self.D = SNResNetProjectionDiscriminator(self.d_conv_dim, ch_in=3, n_classes=self.c_dim)
@@ -245,8 +249,8 @@ class Solver(object):
 
                 # Compute classification accuracy of the discriminator
                 if (i+1) % self.log_step == 0:
-                    classification_accuracies = self.compute_accuracy(out_real, real_label)
-                    regression_accuracies = self.compute_accuracy(out_reg.squeeze(), real_label)
+                    classification_accuracies = self.compute_accuracy(out_real, real_label, n_classes=self.c_dim)
+                    regression_accuracies = self.compute_accuracy(out_reg.squeeze(), real_label, n_classes=self.c_dim)
 
                     log = "{:.2f}/{:.2f}".format(classification_accuracies.data.cpu().numpy(), regression_accuracies.data.cpu().numpy())
                     print('Classification/regression Acc: ', end='')
