@@ -11,7 +11,8 @@ class SelfAttention(nn.Module):
         self.f = nn.Conv2d(ch_in, ch_out, 1)
         self.g = nn.Conv2d(ch_in, ch_out, 1)
         self.h = nn.Conv2d(ch_in, ch_in, 1)
-        self.gamma = Parameter(torch.Tensor(1).normal_(mean=0, std=0.02))
+        # self.gamma = Parameter(torch.Tensor(1).normal_(mean=0, std=0.02))
+        # self.gamma = Parameter(torch.Tensor(1).fill_(0))
 
     def forward(self, x):
         b, c, H, W = x.size()
@@ -25,5 +26,6 @@ class SelfAttention(nn.Module):
 
         s = torch.bmm(f.transpose(1, 2), g)
         beta = F.softmax(s, dim=1)
-        o = self.gamma * torch.bmm(h, beta).view(*x.size())
+        o = torch.bmm(h, beta).view(*x.size())
+        # o = self.gamma * torch.bmm(h, beta).view(*x.size())
         return o

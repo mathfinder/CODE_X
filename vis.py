@@ -9,7 +9,7 @@ result = []
 for index, name in enumerate(files1):
     if index > 50:
         break
-    print index, name
+    print(index, name)
     img1 = cv2.imread(os.path.join(root1, name))
     img2 = cv2.imread(os.path.join(root2, name))
     # print img1.shape

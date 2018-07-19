@@ -35,8 +35,8 @@ class SNEmbedding(nn.Embedding):
         # todo
         sigma = sigma.reshape((1, 1)).expand_as(self.weight)
         self.u[:] = _u
-
-        return self.weight / sigma
+        self.weight.data = self.weight.data / sigma
+        return self.weight
 
     # todo
 

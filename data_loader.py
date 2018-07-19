@@ -6,8 +6,8 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from PIL import Image
-import numpy as np
-# from source.datasets.folder import ImageFolder
+
+from source.datasets.agepairdatafolder import AgePairDataFolder
 
 class TestDataset(Dataset):
     def __init__(self, image_path, transform):
@@ -62,13 +62,13 @@ def make_dataset(dir, class_to_idx):
     def __len__(self):
         return len(self.imgs)
 
-def get_loader(image_path, metadata_path, crop_size, image_size, batch_size, dataset='ImageNet', mode='train'):
+def get_loader(image_path, crop_size, image_size, batch_size, dataset_name='ImageNet', mode='train', num_workers=5):
     """Build and return data loader."""
 
     if mode == 'train':
         transform = transforms.Compose([
             # transforms.CenterCrop(crop_size),
-            transforms.Scale(image_size),
+            transforms.Resize(image_size),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -77,22 +77,27 @@ def get_loader(image_path, metadata_path, crop_size, image_size, batch_size, dat
     elif mode == 'test' or mode == 'evaluate' or mode == 'vis':
         transform = transforms.Compose([
             # transforms.CenterCrop(crop_size),
-            transforms.Scale(image_size),
+            transforms.Resize(image_size),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     elif mode == 'demo':
         transform = transforms.Compose([
-            transforms.Scale((image_size, image_size)),
+            transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-    if dataset == 'ImageNet':
+    if dataset_name == 'ImageNet':
+        mode = mode if mode == 'train' else 'val'
         dataset = ImageFolder(os.path.join(image_path, mode), transform)
+    if dataset_name == 'AgePairDataFolder':
+        mode = mode if mode == 'train' else 'val'
+        dataset = AgePairDataFolder(os.path.join(image_path, mode), transform=transform)
     print(len(dataset))
     shuffle = False
     if mode == 'train':
         shuffle = True
     data_loader = DataLoader(dataset=dataset,
                              batch_size=batch_size,
-                             shuffle=shuffle)
+                             shuffle=shuffle,
+                             num_workers=num_workers)
     return data_loader
